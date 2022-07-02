@@ -47,6 +47,7 @@
                     <div class="card mt-1">
                         <div class="card-header"><h5>Lesson {{lesson.order|add:1}}: {{lesson.title}}</h5></div>
                         <div class="card-body">{{lesson.content}}</div>
+                        <!--Test ob das was ist!!-->
                     </div>
                 {% endfor %}
             </div>
@@ -54,6 +55,9 @@
             <!-- <HINT> Use Bootstrap Collapse to hide exam first, more details could be found here
             https://www.w3schools.com/bootstrap4/bootstrap_collapse.asp-->
 
+            <h2>
+                Start exam
+            </h2>
             <!--
 
             A collapse example here:
@@ -66,7 +70,27 @@
             <!-- <HINT> If user is authenticated, show course exam with a list of question -->
 
             <!-- <HINT> Each example will have many questions -->
+                <h3>Question Time!:</h3>
+            {% for question in course.question_set.all %}
+                <div class="card mt-1">
+                    <div class="card-header"><h5>Question {{question.order|add:1}}: {{question.question_text}}</h5></div>
 
+                    <!--List the choices-->
+                    {% for choice in question.choice_set.all %}
+                        <form>
+                            <input type="checkbox" id="{{choice.id}}" name=choice_{{choice.id}} value="Bike">
+                            <label for="{{choice.id}}"> Choice {{choice.order|add:1}}: {{choice.choice_text}}></label><br>
+                        
+                        </form>
+                       <!-- <div class="card">
+                            <input type="checkbox" name="choice_{{choice.id}}" id="{{choice.id}}">
+                            Choice {{choice.order|add:1}}: {{choice.choice_text}}>
+                        </div>
+                        -->
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <input class="btn btn-success btn-block" type="submit" value="Submit">
             <!-- <HINT> Each question will have many choices -->
 
 
