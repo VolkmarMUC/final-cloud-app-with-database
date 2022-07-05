@@ -175,19 +175,21 @@ def show_exam_result(request, course_id, submission_id):
     submission_choices=submission.choices
     print ('Submission choices gotten')
 
-    correctAnswers=0
+    correct_answers=0
+    maximum_correct_answers= Question.objects.filter( course_id = course_id).count() #assumes one correct answer per question
 
     for current_submission_choice in submission.choices.all():
         print ("Checking answers!")
         #current_choice=get_object_or_404(Choice,pk=current_submission_choice.choice_id)
         if current_submission_choice.is_correct:
-            correctAnswers+=1
+            correct_answers+=1
+            
+    if maximum_correct_answers > 0: #take care we don't divide by zero
+        grade = round ( correct_answers/maximum_correct_answers * 100 )
+    else:
+        grade = 0
 
-
-     #context['message'] = "Invalid username or password."
-     #       return render(request, 'onlinecourse/user_login_bootstrap.html', context)
-    #else:
-    context['grade'] = 96
+    context['grade'] = grade
     context['made_choices'] = submission.choices.all()
     context['course'] = course
     context['questions'] = Question.objects.filter( course_id = course_id)

@@ -41,18 +41,20 @@
         {% if grade > 80 %}
         <div class="alert alert-success">
             <!--HINT Display passed info -->
-            You passed!
+            You passed! Your grade is: {{grade}} /100
         </div>
         {% else %}
         <div class="alert alert-danger">
             <!--HINT Display failed info -->
-            You failed! Here is the link to Re-test
+            You failed! Your grade is: {{grade}} /100  Here is the link to Re-test
         </div>
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
         {% endif %}
+
+
         <div class="card-columns-vertical mt-1">
             <h5 class="">Exam results</h5>
-            
+
             <!--HINT Display exam results-->
 
             {% for question in course.question_set.all %}
@@ -71,17 +73,19 @@
 
                     Choice {{choice.order|add:1}}: {{choice.choice_text}}
                 </div> -->
-                <div class="form-check">
-                    <label class="form-check-label">
-                        <input type="checkbox" name="choice_{{choice.id}}" class="form-check-input" id="{{choice.id}}"
-                            value="{{choice.id}}">{{ choice.choice_text }}
-                    </label>
-                </div>
+                    {% if choice.is_correct %}
+                        <div class="alert-success">
+                            {{ choice.choice_text }} 
+                        </div>
+                        {% else %}
+                        <div class="alert-danger">
+    
+                            {{ choice.choice_text }} 
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
             {% endfor %}
-            <input class="btn btn-success btn-block" type="submit" value="Submit">
-
         </div>
     </div>
 </body>
