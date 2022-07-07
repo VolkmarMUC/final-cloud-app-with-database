@@ -74,7 +74,7 @@
 
         <!-- <HINT> Each example will have many questions -->
         <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="POST">
-            <!-- older version <form id="questionform" action="/onlinecourse/submit/" method="post"> -->
+            
             {% csrf_token %}
             <!---included to silence the CSRF issue-->
 
@@ -86,14 +86,7 @@
 
                 <!--List the choices-->
                 {% for choice in question.choice_set.all %}
-                <!--- commented out <input type="checkbox" id="{{choice.id}}" name=choice_{{choice.id}} value="Bike">
-                <label for="{{choice.id}}"> Choice {{choice.order|add:1}}: {{choice.choice_text}}></label><br>
-
-                <div class="card">
-                    <input type="checkbox" name="choice_{{choice.id}}" id="{{choice.id}}">
-
-                    Choice {{choice.order|add:1}}: {{choice.choice_text}}
-                </div> -->
+               
                 <div class="form-check">
                     <label class="form-check-label">
                         <input type="checkbox" name="choice_{{choice.id}}" class="form-check-input" id="{{choice.id}}"

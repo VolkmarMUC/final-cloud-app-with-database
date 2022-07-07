@@ -111,29 +111,16 @@ def enroll(request, course_id):
          # Add each selected choice object to the submission object
          # Redirect to show_exam_result with the submission id
 
-
-##MY version
-#def submit_exam(request,course):
-
-    #get user and course object
-    #course = get_object_or_404(Course, pk=course_id)
- #   user = request.user
- #   enrollment = Enrollment.objects.get(user=user, course=course)
- #   Submission.objects.create(enrollment=enrollment)
- #   print("Enrollment!")
-  # print(enrollment)
-#    return render(request,"OK")
-
 def submit(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
     user = request.user
-    print("user")
+    #print("user")
     enrollment = Enrollment.objects.get(user=user, course=course)
-    print("enrollment")
+    #print("enrollment")
     submission = Submission.objects.create(enrollment=enrollment)
-    print("Submission")
+    #print("Submission")
     choices = extract_answers(request)
-    print("Choice")
+    #print("Choice")
     submission.choices.set(choices)
     submission_id = submission.id
     return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course_id, submission_id,)))
@@ -167,19 +154,19 @@ def show_exam_result(request, course_id, submission_id):
     context = {}
 
     course=get_object_or_404(Course, pk=course_id)
-    print ("Course gotten")
+    #print ("Course gotten")
     submission=get_object_or_404(Submission, pk=submission_id)
-    print ("Submission gotten!")
+    #print ("Submission gotten!")
 
     #iterate over choices
     submission_choices=submission.choices
-    print ('Submission choices gotten')
+    #print ('Submission choices gotten')
 
     correct_answers=0
     maximum_correct_answers= Question.objects.filter( course_id = course_id).count() #assumes one correct answer per question
 
     for current_submission_choice in submission.choices.all():
-        print ("Checking answers!")
+        #print ("Checking answers!")
         #current_choice=get_object_or_404(Choice,pk=current_submission_choice.choice_id)
         if not current_submission_choice.is_correct: #the logic in the original template is screwed, therefore this strange line
             correct_answers+=1
@@ -203,19 +190,19 @@ def show_exam_result(request, course_id, submission_id):
     
                     #was selected
                     markup_choices_dict[current_choice.id] = "CORRECT"
-                    print ("Correct")
+                    #print ("Correct")
                 else:
                     #not selected
                     markup_choices_dict[current_choice.id] = "MISSED"
-                    print ("Missed")
+                    #print ("Missed")
             else: # choice is false
                 if submissioon_contains_choice(submission, current_choice):
                     #was falsely select
                     markup_choices_dict[current_choice.id] = "WRONG"
-                    print ("Wrong")
+                    #print ("Wrong")
                 else:
                     markup_choices_dict[current_choice.id] = "LEAVE"
-                    print ("Leave")
+                    #print ("Leave")
 
     context['grade'] = grade
     context['made_choices'] = submission.choices.all()
@@ -223,8 +210,8 @@ def show_exam_result(request, course_id, submission_id):
     context['questions'] = Question.objects.filter( course_id = course_id)
     context['markup_choices'] = markup_choices_dict
 
-    print (markup_choices_dict)
-    # context['questions'] = get_object_or_404(Question, course_id = course_id)
+    #print (markup_choices_dict)
+
     
     return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
     
