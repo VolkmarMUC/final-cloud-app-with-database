@@ -181,7 +181,7 @@ def show_exam_result(request, course_id, submission_id):
     for current_submission_choice in submission.choices.all():
         print ("Checking answers!")
         #current_choice=get_object_or_404(Choice,pk=current_submission_choice.choice_id)
-        if current_submission_choice.is_correct:
+        if not current_submission_choice.is_correct: #the logic in the original template is screwed, therefore this strange line
             correct_answers+=1
             
     if maximum_correct_answers > 0: #take care we don't divide by zero
@@ -189,15 +189,54 @@ def show_exam_result(request, course_id, submission_id):
     else:
         grade = 0
 
+#here comes the logic in order to determine how to mark up the answers
+    markup_choices_dict = {}
+
+    questions= Question.objects.filter( course_id = course_id)
+
+    for current_question in questions:
+        choices = Choice.objects.filter (question_id = current_question.id)
+        for current_choice in choices:
+            if not current_choice.is_correct: #choice is a true one, again the screwed logic from the template, everything is opposite as it should be
+                #look up whether is was selected
+                if submissioon_contains_choice(submission, current_choice):
+    
+                    #was selected
+                    markup_choices_dict[current_choice.id] = "CORRECT"
+                    print ("Correct")
+                else:
+                    #not selected
+                    markup_choices_dict[current_choice.id] = "MISSED"
+                    print ("Missed")
+            else: # choice is false
+                if submissioon_contains_choice(submission, current_choice):
+                    #was falsely select
+                    markup_choices_dict[current_choice.id] = "WRONG"
+                    print ("Wrong")
+                else:
+                    markup_choices_dict[current_choice.id] = "LEAVE"
+                    print ("Leave")
+
     context['grade'] = grade
     context['made_choices'] = submission.choices.all()
     context['course'] = course
     context['questions'] = Question.objects.filter( course_id = course_id)
+    context['markup_choices'] = markup_choices_dict
+
+    print (markup_choices_dict)
     # context['questions'] = get_object_or_404(Question, course_id = course_id)
     
-    print ('Hallo Volkmar!!')
     return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
     
 
 
+def submissioon_contains_choice(submission, choice):
 
+    for current_submission_choice in submission.choices.all():
+        if current_submission_choice.id == choice.id:
+            print ("Choice found!")
+            return True;
+
+    print ("Choice not found!")
+    return False
+    

@@ -60,29 +60,38 @@
             {% for question in course.question_set.all %}
             <div class="card mt-1">
                 <div class="card-header">
-                    <h5>Question {{question.order|add:1}}: {{question.question_text}}</h5>
+                    <h5> {{question.question_text}}</h5>
                 </div>
 
                 <!--List the choices-->
                 {% for choice in question.choice_set.all %}
-                <!--- commented out <input type="checkbox" id="{{choice.id}}" name=choice_{{choice.id}} value="Bike">
-                <label for="{{choice.id}}"> Choice {{choice.order|add:1}}: {{choice.choice_text}}></label><br>
+                
+                    {% for key, value in markup_choices.items %}
 
-                <div class="card">
-                    <input type="checkbox" name="choice_{{choice.id}}" id="{{choice.id}}">
+                        {% if key == choice.id %}
+                       
+                            {% if value == 'CORRECT' %}
+                            <div class="alert-success">
+                                Correct answer: {{ choice.choice_text }}<br>
+                            </div>
+                            {% elif value == 'MISSED' %}
+                            <div class="alert-danger">
+                                Not selected: {{ choice.choice_text }}<br>
+                            </div>
+                            {% elif value == 'WRONG' %}
+                            <div class="alert-danger">
+                                Wrong: {{ choice.choice_text }}<br>
+                            </div>
+                            {% elif value == 'LEAVE' %} 
+                                {{ choice.choice_text }}<br>
 
-                    Choice {{choice.order|add:1}}: {{choice.choice_text}}
-                </div> -->
-                    {% if choice.is_correct %}
-                        <div class="alert-success">
-                            {{ choice.choice_text }} 
-                        </div>
-                        {% else %}
-                        <div class="alert-danger">
-    
-                            {{ choice.choice_text }} 
-                        </div>
-                    {% endif %}
+                            {% endif %}
+
+                        {% endif %}
+                        
+                    {% endfor %}
+                                   
+
                 {% endfor %}
             </div>
             {% endfor %}
